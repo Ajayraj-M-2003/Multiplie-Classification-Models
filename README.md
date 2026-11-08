@@ -41,8 +41,8 @@ The objective of this assignment is to:
 ---
 
 ### c. GitHub Repository Link
-* **GitHub Repository**: `[INSERT_YOUR_GITHUB_REPO_URL_HERE]`
-* **Live Streamlit App**: `[INSERT_YOUR_STREAMLIT_APP_URL_HERE]`
+* **GitHub Repository**: [https://github.com/Ajayraj-M-2003/Multiplie-Classification-Models](https://github.com/Ajayraj-M-2003/Multiplie-Classification-Models)
+* **Live Streamlit App**: [https://multiplie-classification-models.streamlit.app](https://multiplie-classification-models.streamlit.app) *(or your deployed Streamlit Cloud URL)*
 
 #### Repository Structure:
 ```text

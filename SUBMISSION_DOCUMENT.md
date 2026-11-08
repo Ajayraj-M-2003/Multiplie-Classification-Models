@@ -7,7 +7,7 @@
 ## 1. Mandatory Submission Links
 
 ### 1.1 GitHub Repository Link
-* **URL**: `https://github.com/<YOUR_GITHUB_USERNAME>/<YOUR_REPOSITORY_NAME>`
+* **URL**: https://github.com/Ajayraj-M-2003/Multiplie-Classification-Models
 * **Contents Included**:
   * Complete source code (`app.py`, `model/train_models.py`, `model/train_models.ipynb`)
   * `requirements.txt`
@@ -16,7 +16,7 @@
   * Serialized trained model files (`model/*.joblib`) & preprocessing artifacts
 
 ### 1.2 Live Streamlit App Link
-* **URL**: `https://<YOUR_STREAMLIT_SUBDOMAIN>.streamlit.app`
+* **URL**: https://multiplie-classification-models.streamlit.app *(or your deployed Streamlit Cloud URL)*
 * **Deployment Platform**: Streamlit Community Cloud
 
 ---

@@ -20,7 +20,7 @@ from sklearn.metrics import (
 )
 
 # ---------------------------------------------------------
-# Page Configuration & Styling
+# Page Configuration & Custom CSS Styling
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="Credit Default Classifier | BITS Pilani ML Assignment 2",
@@ -29,11 +29,11 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom Styling for polished, academic look
+# Custom Styling for polished, unique academic look
 st.markdown("""
 <style>
     .main-header {
-        font-size: 2.1rem;
+        font-size: 2.15rem;
         font-weight: 700;
         color: #1E3A8A;
         margin-bottom: 0.2rem;
@@ -47,19 +47,24 @@ st.markdown("""
         background-color: #F8FAFC;
         border: 1px solid #E2E8F0;
         border-radius: 10px;
-        padding: 14px 18px;
+        padding: 12px 14px;
         text-align: center;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        transition: transform 0.2s ease;
+    }
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
     .metric-title {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         font-weight: 600;
         color: #64748B;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
     .metric-value {
-        font-size: 1.7rem;
+        font-size: 1.65rem;
         font-weight: 700;
         color: #0F172A;
         margin-top: 4px;
@@ -74,11 +79,20 @@ st.markdown("""
         font-weight: 600;
         margin-bottom: 8px;
     }
+    .threshold-badge {
+        display: inline-block;
+        background-color: #FEF3C7;
+        color: #92400E;
+        padding: 3px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# Model Catalog & File Paths
+# Model Catalog & Feature Definitions
 # ---------------------------------------------------------
 MODEL_DIR = "model"
 MODEL_FILES = {
@@ -120,8 +134,8 @@ def load_default_test_data():
 
 def extract_features_and_target(df: pd.DataFrame):
     """
-    Identifies the target column and extracts feature matrix X and ground truth y.
-    Handles multiple naming variants for robustness.
+    Identifies target column and extracts feature matrix X and ground truth y.
+    Handles multiple naming variants for maximum robustness.
     """
     possible_targets = [
         'default', 'default payment next month', 'default_payment_next_month',
@@ -178,9 +192,11 @@ def predict_model(pipeline, X):
     if hasattr(clf, 'predict_proba'):
         y_scores = pipeline.predict_proba(X)[:, 1]
     elif hasattr(clf, 'decision_function'):
-        y_scores = pipeline.decision_function(X)
+        # Map decision function through sigmoid for normalized thresholding
+        raw_scores = pipeline.decision_function(X)
+        y_scores = 1.0 / (1.0 + np.exp(-raw_scores))
     else:
-        y_scores = y_pred
+        y_scores = y_pred.astype(float)
     return y_pred, y_scores
 
 
@@ -196,7 +212,7 @@ with st.sidebar:
     st.markdown("### 1. Model Selection")
     view_options = ["Model Comparison (All 5)"] + list(MODEL_FILES.keys())
     selected_view = st.selectbox(
-        "Choose Model or Comparison View:",
+        "Choose Model or View:",
         options=view_options,
         index=0,
         help="Select an individual classifier to inspect detailed metrics, confusion matrix, and ROC curve, or choose Comparison to see all 5 models."
@@ -204,7 +220,7 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("### 2. Test Data Upload (CSV)")
-    st.info("💡 As per assignment guidelines, upload test data only. The app computes metrics without retraining.")
+    st.info("💡 Upload test data only (max 10,000 rows recommended for free tier). The app computes metrics without retraining.")
 
     uploaded_file = st.file_uploader(
         "Upload Test CSV",
@@ -235,13 +251,13 @@ with st.sidebar:
     - **Course**: Machine Learning (M.Tech AIML)
     - **Assignment**: Assignment 2
     - **Dataset**: UCI Credit Card Default (23 features)
-    - **Target**: Default Payment Next Month (0/1)
+    - **Repository**: [GitHub](https://github.com/Ajayraj-M-2003/Multiplie-Classification-Models)
     """)
 
 # ---------------------------------------------------------
 # Main Page Header
 # ---------------------------------------------------------
-st.markdown('<div class="main-header">Credit Card Default Prediction Dashboard</div>', unsafe_allow_html=True)
+st.markdown('<div class="main-header">Credit Card Default Risk Classifier</div>', unsafe_allow_html=True)
 st.markdown(
     '<div class="sub-header">Comparative Evaluation of 5 Machine Learning Classifiers with Real-Time Inference on Test Data</div>',
     unsafe_allow_html=True
@@ -271,7 +287,7 @@ with st.expander("🔍 Test Dataset Overview & Feature Inspector", expanded=Fals
     st.dataframe(test_df.head(10), use_container_width=True)
 
 # ---------------------------------------------------------
-# View 1: All Models Comparison Table & Charts
+# View 1: All Models Comparison Table & Benchmark
 # ---------------------------------------------------------
 if selected_view == "Model Comparison (All 5)":
     st.subheader("📊 Model Performance Comparison Table")
@@ -372,7 +388,7 @@ if selected_view == "Model Comparison (All 5)":
         """)
 
 # ---------------------------------------------------------
-# View 2: Individual Model Deep Dive
+# View 2: Individual Model Deep Dive & Interactive Threshold
 # ---------------------------------------------------------
 else:
     model_name = selected_view
@@ -383,7 +399,35 @@ else:
         st.stop()
 
     pipeline = models_dict[model_name]
-    y_pred, y_scores = predict_model(pipeline, X_test)
+    y_pred_default, y_scores = predict_model(pipeline, X_test)
+
+    # Interactive Operating Threshold Tuning
+    threshold_col1, threshold_col2 = st.columns([2, 1])
+    with threshold_col1:
+        threshold = st.slider(
+            "⚙️ Decision Threshold for Default Prediction (Class 1):",
+            min_value=0.10,
+            max_value=0.90,
+            value=0.50,
+            step=0.05,
+            help="Adjusting the decision threshold changes how aggressive the model is at flagging potential defaulters. Lower thresholds increase Recall (detecting more defaults) at the cost of Precision."
+        )
+    with threshold_col2:
+        st.markdown(
+            f"""
+            <div style="padding-top: 18px;">
+                <span class="threshold-badge">Active Threshold: {threshold:.2f}</span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    # Compute predictions according to chosen threshold
+    if y_scores is not None:
+        y_pred = (y_scores >= threshold).astype(int)
+    else:
+        y_pred = y_pred_default
+
     metrics = compute_metrics(y_test, y_pred, y_scores)
 
     # 1. KPI Metric Cards (Section 5c)
@@ -427,7 +471,7 @@ else:
             xticklabels=["Predicted No Default (0)", "Predicted Default (1)"],
             yticklabels=["Actual No Default (0)", "Actual Default (1)"]
         )
-        ax_cm.set_title(f"Confusion Matrix: {model_name}", fontsize=12, fontweight="bold")
+        ax_cm.set_title(f"Confusion Matrix @ Threshold {threshold:.2f}", fontsize=12, fontweight="bold")
         ax_cm.set_ylabel("True Label")
         ax_cm.set_xlabel("Predicted Label")
         plt.tight_layout()
@@ -451,7 +495,7 @@ else:
         # ROC Curve for selected model
         if y_scores is not None:
             st.markdown("### 📉 ROC Curve")
-            fpr, tpr, _ = roc_curve(y_test, y_scores)
+            fpr, tpr, thresholds_roc = roc_curve(y_test, y_scores)
             fig_single_roc, ax_s_roc = plt.subplots(figsize=(6, 3.5))
             ax_s_roc.plot(fpr, tpr, color="#2563EB", lw=2, label=f"ROC (AUC = {metrics['AUC']:.4f})")
             ax_s_roc.plot([0, 1], [0, 1], color="grey", linestyle="--")
@@ -465,7 +509,31 @@ else:
             plt.tight_layout()
             st.pyplot(fig_single_roc)
 
-    # 3. Sample Inference Table
+    # 3. Feature Importance & Model Insights
+    clf_obj = pipeline.named_steps.get('classifier', None)
+    if model_name == "Decision Tree" and hasattr(clf_obj, 'feature_importances_'):
+        st.markdown("---")
+        st.markdown("### 🌲 Top Predictive Features (Gini Importance)")
+        importances = pd.Series(clf_obj.feature_importances_, index=EXPECTED_FEATURES).sort_values(ascending=False).head(10)
+        fig_feat, ax_feat = plt.subplots(figsize=(10, 3.5))
+        sns.barplot(x=importances.values, y=importances.index, palette="Blues_r", ax=ax_feat)
+        ax_feat.set_title("Decision Tree: Top 10 Features Driving Credit Default Prediction", fontsize=11, fontweight="bold")
+        ax_feat.set_xlabel("Relative Importance Score")
+        plt.tight_layout()
+        st.pyplot(fig_feat)
+    elif model_name == "Logistic Regression" and hasattr(clf_obj, 'coef_'):
+        st.markdown("---")
+        st.markdown("### 📊 Logistic Regression Coefficients (Top Predictors)")
+        coefs = pd.Series(clf_obj.coef_[0], index=EXPECTED_FEATURES).abs().sort_values(ascending=False).head(10)
+        fig_coef, ax_coef = plt.subplots(figsize=(10, 3.5))
+        sns.barplot(x=coefs.values, y=coefs.index, palette="Reds_r", ax=ax_coef)
+        ax_coef.set_title("Logistic Regression: Top 10 Standardized Absolute Coefficients", fontsize=11, fontweight="bold")
+        ax_coef.set_xlabel("|Coefficient Value|")
+        plt.tight_layout()
+        st.pyplot(fig_coef)
+
+    # 4. Sample Inference Table
+    st.markdown("---")
     st.markdown("### 🧪 Sample Predictions on Test Data")
     sample_preview = X_test.head(15).copy()
     sample_preview["Actual Target"] = y_test.head(15).values
@@ -482,9 +550,8 @@ st.markdown(
     """
     <div style="text-align: center; color: #94A3B8; font-size: 0.85rem;">
         BITS Pilani • Work Integrated Learning Programmes (WILP) • M.Tech AIML — Machine Learning Assignment 2<br>
-        Models serialized via scikit-learn & joblib • Built with Streamlit Community Cloud
+        Models serialized via scikit-learn & joblib • Deployed on Streamlit Community Cloud
     </div>
     """,
     unsafe_allow_html=True
 )
-
