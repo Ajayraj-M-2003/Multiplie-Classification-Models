@@ -88,6 +88,24 @@ st.markdown("""
         font-size: 0.85rem;
         font-weight: 600;
     }
+    @media (prefers-color-scheme: dark) {
+        .metric-card {
+            background-color: #1E293B !important;
+            border: 1px solid #334155 !important;
+        }
+        .metric-title {
+            color: #94A3B8 !important;
+        }
+        .metric-value {
+            color: #F8FAFC !important;
+        }
+        .main-header {
+            color: #60A5FA !important;
+        }
+        .sub-header {
+            color: #94A3B8 !important;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -326,7 +344,7 @@ if selected_view == "Model Comparison (All 5)":
         "MCC": "{:.4f}"
     }).highlight_max(
         subset=["Accuracy", "AUC", "Precision", "Recall", "F1", "MCC"],
-        color="#D1FAE5"
+        props="background-color: #047857; color: #FFFFFF; font-weight: bold;"
     )
 
     st.dataframe(styled_df, use_container_width=True)
@@ -488,7 +506,10 @@ else:
         report_df = pd.DataFrame(report_dict).transpose()
         report_df = report_df.round(4)
         st.dataframe(
-            report_df.style.highlight_max(subset=["precision", "recall", "f1-score"], color="#E0F2FE"),
+            report_df.style.highlight_max(
+                subset=["precision", "recall", "f1-score"],
+                props="background-color: #1E40AF; color: #FFFFFF; font-weight: bold;"
+            ),
             use_container_width=True
         )
 

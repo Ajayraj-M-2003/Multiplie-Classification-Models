@@ -42,7 +42,7 @@ The objective of this assignment is to:
 
 ### c. GitHub Repository Link
 * **GitHub Repository**: [https://github.com/Ajayraj-M-2003/Multiplie-Classification-Models](https://github.com/Ajayraj-M-2003/Multiplie-Classification-Models)
-* **Live Streamlit App**: [https://multiplie-classification-models.streamlit.app](https://multiplie-classification-models.streamlit.app) *(or your deployed Streamlit Cloud URL)*
+* **Live Streamlit App**: [https://multiplie-classification-models-hrqe7vxgsds2wdnbedxate.streamlit.app/](https://multiplie-classification-models-hrqe7vxgsds2wdnbedxate.streamlit.app/)
 
 #### Repository Structure:
 ```text

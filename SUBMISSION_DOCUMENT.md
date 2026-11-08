@@ -16,7 +16,7 @@
   * Serialized trained model files (`model/*.joblib`) & preprocessing artifacts
 
 ### 1.2 Live Streamlit App Link
-* **URL**: https://multiplie-classification-models.streamlit.app *(or your deployed Streamlit Cloud URL)*
+* **URL**: https://multiplie-classification-models-hrqe7vxgsds2wdnbedxate.streamlit.app/
 * **Deployment Platform**: Streamlit Community Cloud
 
 ---
