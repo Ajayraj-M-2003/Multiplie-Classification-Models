@@ -98,3 +98,4 @@ All 5 classification models were trained on the same 80% stratified training spl
 > 1. **Leader in Discrimination & Balance**: It achieves the highest **ROC-AUC (0.7462)**, the highest **F1-Score (0.4657)**, and the highest **Matthews Correlation Coefficient (0.3909)**.
 > 2. **Handling Class Imbalance**: In credit risk evaluation where the default class represents ~22% of total customers, Accuracy alone is deceptive. MCC and F1-Score reflect genuine predictive quality, and Decision Tree outperforms all competitors on both.
 > 3. **Financial Interpretability & Speed**: Unlike black-box kernel methods or slow instance-based learners like KNN, the Decision Tree provides lightning-fast inference on cloud endpoints (Streamlit Community Cloud) and straightforward rule interpretability for banking regulatory compliance.
+

@@ -125,3 +125,4 @@ All 5 classification models were trained on the same 80% stratified training spl
    streamlit run app.py
    ```
    Open your browser at `http://localhost:8501`.
+

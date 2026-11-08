@@ -230,3 +230,4 @@ if __name__ == '__main__':
     
     # Train, evaluate, and persist models
     metrics_df = train_and_evaluate_models(X_train, X_test, y_train, y_test, 'model')
+
