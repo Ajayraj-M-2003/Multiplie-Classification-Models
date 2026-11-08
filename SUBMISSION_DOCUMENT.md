@@ -22,9 +22,11 @@
 ---
 
 ## 2. BITS Virtual Lab Execution Proof
-*(Insert your screenshot of running the assignment / Jupyter Notebook / VS Code on BITS Virtual Lab here)*
+*Student Account*: `s2026aj05894` | *Course*: M.Tech (AIML) Machine Learning
 
-> **[ INSERT BITS VIRTUAL LAB SCREENSHOT HERE ]**
+![BITS Virtual Lab Execution Proof](bits_lab_screenshot.jpg)
+
+*Figure 1: Verification of model training and metric computation in Prayogshala (BITS Virtual Lab) under student account s2026aj05894.*
 
 ---
 
